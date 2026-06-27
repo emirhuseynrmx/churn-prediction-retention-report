@@ -1,0 +1,11 @@
+feature,importance,direction
+numeric__usage,0.162946417927742,model_importance
+numeric__support_tickets,0.13403566181659698,model_importance
+numeric__payments,0.1307331919670105,model_importance
+categorical__plan_Pro,0.11148802191019058,model_importance
+numeric__nps_score,0.10769375413656235,model_importance
+numeric__failed_payments,0.09191513061523438,model_importance
+numeric__months_active,0.08852711319923401,model_importance
+numeric__discount_percent,0.07224136590957642,model_importance
+categorical__plan_Basic,0.06576718389987946,model_importance
+categorical__plan_Enterprise,0.034652162343263626,model_importance

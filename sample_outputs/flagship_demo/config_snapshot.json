@@ -1,0 +1,22 @@
+{
+  "target_column": "churned",
+  "id_column": "customer_id",
+  "positive_label": 1,
+  "test_size": 0.3,
+  "random_state": 42,
+  "model_name": "xgboost_classifier",
+  "decision_threshold": 0.5,
+  "top_recommendation_count": 10,
+  "lift_table_deciles": 10,
+  "shap_sample_size": 300,
+  "risk_thresholds": {
+    "high": 0.7,
+    "medium": 0.4
+  },
+  "recommendation_rules": {
+    "support_tickets": "Prioritize proactive support outreach and assign a customer success owner.",
+    "usage": "Offer onboarding, usage review, or workflow training to improve product adoption.",
+    "payments": "Review billing friction, failed payments, discounts, or plan-fit issues.",
+    "plan": "Review whether this plan tier matches the customer's actual usage pattern."
+  }
+}
