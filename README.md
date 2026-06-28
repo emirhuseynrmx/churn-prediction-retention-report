@@ -25,6 +25,8 @@ the pipeline writes:
 - `predictions.csv`
 - `risk_segments.csv`
 - `holdout_lift_table.csv`
+- `calibration_table.csv`
+- `metric_confidence_intervals.csv`
 - `feature_importance.csv`
 - `shap_feature_importance.csv`
 - `retention_recommendations.csv`
@@ -70,6 +72,7 @@ The repo also includes the boring parts that make this kind of work safer:
 - SHAP explanations for XGBoost and logistic configs
 - ROC AUC, PR-AUC, baseline PR-AUC, precision, recall, F1, confusion matrix
 - holdout lift table with top 10% and top 20% churn capture
+- holdout calibration table and bootstrap confidence intervals
 - probability distribution sanity chart
 - model card, config snapshot, output manifest
 - Dockerfile for reproducible runs
@@ -116,6 +119,8 @@ Every exported CSV is validated before export:
 - `predictions.csv`: customer id, churn probability, risk segment
 - `risk_segments.csv`: segment size and average risk
 - `holdout_lift_table.csv`: decile-level churn capture and cumulative lift measured on the test split
+- `calibration_table.csv`: predicted probability versus observed churn rate on the test split
+- `metric_confidence_intervals.csv`: bootstrap intervals for ROC-AUC and PR-AUC
 - `feature_importance.csv`: model feature importance
 - `shap_feature_importance.csv`: SHAP attribution table
 - `retention_recommendations.csv`: customer action queue with priority

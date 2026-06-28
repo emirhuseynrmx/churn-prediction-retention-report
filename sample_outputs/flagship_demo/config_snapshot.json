@@ -11,6 +11,8 @@
   "top_recommendation_count": 10,
   "lift_table_deciles": 10,
   "shap_sample_size": 300,
+  "calibration_bins": 10,
+  "bootstrap_iterations": 300,
   "risk_thresholds": {
     "high": 0.7,
     "medium": 0.4

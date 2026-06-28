@@ -17,6 +17,18 @@
 - `recall`: `0.508`
 - `f1`: `0.5632`
 - `confusion_matrix`: `[[1386, 166], [276, 285]]`
+- `brier_score`: `0.136`
+- `roc_auc_ci_low`: `0.8253`
+- `roc_auc_ci_high`: `0.8619`
+- `pr_auc_ci_low`: `0.6087`
+- `pr_auc_ci_high`: `0.6993`
+
+## Probability Evidence
+
+- Calibration is calculated on the holdout set only.
+- Confidence intervals are bootstrap estimates from holdout predictions.
+- `calibration_table.csv` compares predicted probability with observed churn rate.
+- `metric_confidence_intervals.csv` reports uncertainty around ROC-AUC and PR-AUC.
 
 ## Top Risk Drivers
 

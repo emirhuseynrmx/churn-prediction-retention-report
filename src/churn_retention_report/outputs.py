@@ -50,6 +50,17 @@ def write_metrics_report(
     ]
     for key, value in metrics.items():
         lines.append(f"- `{key}`: `{value}`")
+    lines.extend(
+        [
+            "",
+            "## Probability Evidence",
+            "",
+            "- Calibration is calculated on the holdout set only.",
+            "- Confidence intervals are bootstrap estimates from holdout predictions.",
+            "- `calibration_table.csv` compares predicted probability with observed churn rate.",
+            "- `metric_confidence_intervals.csv` reports uncertainty around ROC-AUC and PR-AUC.",
+        ]
+    )
     lines.extend(["", "## Top Risk Drivers", ""])
     for _, row in top_features.head(10).iterrows():
         lines.append(

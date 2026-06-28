@@ -70,6 +70,39 @@ def validate_lift_table(frame: pd.DataFrame) -> pd.DataFrame:
     return schema.validate(frame, lazy=True)
 
 
+def validate_calibration_table(frame: pd.DataFrame) -> pd.DataFrame:
+    schema = pa.DataFrameSchema(
+        {
+            "bin": pa.Column(int, checks=pa.Check.ge(1)),
+            "customers": pa.Column(int, checks=pa.Check.ge(1)),
+            "mean_predicted_probability": pa.Column(
+                float,
+                checks=pa.Check.in_range(0, 1),
+            ),
+            "observed_churn_rate": pa.Column(float, checks=pa.Check.in_range(0, 1)),
+            "absolute_gap": pa.Column(float, checks=pa.Check.in_range(0, 1)),
+        },
+        coerce=True,
+        strict=True,
+    )
+    return schema.validate(frame, lazy=True)
+
+
+def validate_metric_intervals(frame: pd.DataFrame) -> pd.DataFrame:
+    schema = pa.DataFrameSchema(
+        {
+            "metric": pa.Column(str, checks=pa.Check.isin(["roc_auc", "pr_auc"])),
+            "estimate": pa.Column(float, checks=pa.Check.in_range(0, 1)),
+            "ci_low": pa.Column(float, checks=pa.Check.in_range(0, 1)),
+            "ci_high": pa.Column(float, checks=pa.Check.in_range(0, 1)),
+            "bootstrap_samples": pa.Column(int, checks=pa.Check.ge(1)),
+        },
+        coerce=True,
+        strict=True,
+    )
+    return schema.validate(frame, lazy=True)
+
+
 def validate_shap_importance(frame: pd.DataFrame) -> pd.DataFrame:
     schema = pa.DataFrameSchema(
         {

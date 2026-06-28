@@ -13,13 +13,16 @@ from churn_retention_report.artifacts import (
 )
 from churn_retention_report.config import ChurnConfig
 from churn_retention_report.contracts import (
+    validate_calibration_table,
     validate_feature_importance,
     validate_lift_table,
+    validate_metric_intervals,
     validate_predictions,
     validate_recommendations,
     validate_risk_segments,
     validate_shap_importance,
 )
+from churn_retention_report.evidence import build_probability_evidence
 from churn_retention_report.explainability import build_shap_importance
 from churn_retention_report.modeling import train_model
 from churn_retention_report.outputs import write_csv, write_metrics_report, write_model
@@ -48,6 +51,8 @@ class PipelineResult:
     predictions_path: Path
     risk_segments_path: Path
     lift_table_path: Path
+    calibration_table_path: Path
+    metric_intervals_path: Path
     feature_importance_path: Path
     shap_importance_path: Path
     recommendations_path: Path
@@ -79,6 +84,14 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
     )
     risk_segments = build_risk_segments(predictions)
     lift_table = build_lift_table(holdout_predictions, holdout_frame, config)
+    probability_evidence = build_probability_evidence(
+        y_true=holdout_frame[config.target_column],
+        probabilities=artifacts.holdout_probabilities,
+        bins=config.calibration_bins,
+        bootstrap_iterations=config.bootstrap_iterations,
+        random_state=config.random_state,
+    )
+    metrics = {**artifacts.metrics, **probability_evidence.metrics}
     recommendations = build_recommendations(
         predictions,
         frame,
@@ -96,12 +109,22 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
     predictions = validate_predictions(predictions, config)
     risk_segments = validate_risk_segments(risk_segments)
     lift_table = validate_lift_table(lift_table)
+    calibration_table = validate_calibration_table(probability_evidence.calibration_table)
+    metric_intervals = validate_metric_intervals(probability_evidence.metric_intervals)
     recommendations = validate_recommendations(recommendations, config)
     quality_report = profile_data_quality(frame, config)
     output_dir.mkdir(parents=True, exist_ok=True)
     predictions_path = write_csv(predictions, output_dir / "predictions.csv")
     risk_segments_path = write_csv(risk_segments, output_dir / "risk_segments.csv")
     lift_table_path = write_csv(lift_table, output_dir / "holdout_lift_table.csv")
+    calibration_table_path = write_csv(
+        calibration_table,
+        output_dir / "calibration_table.csv",
+    )
+    metric_intervals_path = write_csv(
+        metric_intervals,
+        output_dir / "metric_confidence_intervals.csv",
+    )
     feature_importance_path = write_csv(
         feature_importance,
         output_dir / "feature_importance.csv",
@@ -138,7 +161,7 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
     )
     model_path = write_model(artifacts.model, output_dir / "model.joblib")
     metrics_report_path = write_metrics_report(
-        metrics=artifacts.metrics,
+        metrics=metrics,
         output_path=output_dir / "metrics_report.md",
         rows=len(frame),
         churn_rate=float(frame[config.target_column].mean()),
@@ -153,15 +176,17 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
     )
     model_card_path = write_model_card(
         config=config,
-        metrics=artifacts.metrics,
+        metrics=metrics,
         path=output_dir / "model_card.md",
     )
     pdf_report_path = write_pdf_report(
         output_path=output_dir / "client_report.pdf",
-        metrics=artifacts.metrics,
+        metrics=metrics,
         quality_report=quality_report,
         risk_segments=risk_segments,
         lift_table=lift_table,
+        calibration_table=calibration_table,
+        metric_intervals=metric_intervals,
         recommendations=recommendations,
         risk_chart_path=risk_chart_path,
         feature_chart_path=feature_chart_path,
@@ -176,6 +201,8 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
                 "predictions": str(predictions_path),
                 "risk_segments": str(risk_segments_path),
                 "holdout_lift_table": str(lift_table_path),
+                "calibration_table": str(calibration_table_path),
+                "metric_confidence_intervals": str(metric_intervals_path),
                 "feature_importance": str(feature_importance_path),
                 "shap_feature_importance": str(shap_importance_path),
                 "retention_recommendations": str(recommendations_path),
@@ -196,6 +223,8 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
                 "predictions",
                 "risk_segments",
                 "holdout_lift_table",
+                "calibration_table",
+                "metric_confidence_intervals",
                 "feature_importance",
                 "shap_feature_importance",
                 "retention_recommendations",
@@ -205,10 +234,12 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
     )
     return PipelineResult(
         output_dir=output_dir,
-        metrics=artifacts.metrics,
+        metrics=metrics,
         predictions_path=predictions_path,
         risk_segments_path=risk_segments_path,
         lift_table_path=lift_table_path,
+        calibration_table_path=calibration_table_path,
+        metric_intervals_path=metric_intervals_path,
         feature_importance_path=feature_importance_path,
         shap_importance_path=shap_importance_path,
         recommendations_path=recommendations_path,

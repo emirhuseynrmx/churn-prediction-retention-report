@@ -47,6 +47,8 @@ class ChurnConfig(BaseModel):
     top_recommendation_count: int = Field(default=10, ge=1)
     lift_table_deciles: int = Field(default=10, ge=5, le=20)
     shap_sample_size: int = Field(default=300, ge=25, le=5000)
+    calibration_bins: int = Field(default=10, ge=4, le=20)
+    bootstrap_iterations: int = Field(default=300, ge=50, le=5000)
     risk_thresholds: RiskThresholds = Field(default_factory=RiskThresholds)
     xgboost: XGBoostConfig = Field(default_factory=XGBoostConfig)
     recommendation_rules: dict[str, str] = Field(default_factory=dict)

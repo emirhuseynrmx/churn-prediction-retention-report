@@ -27,6 +27,8 @@ def test_run_churn_pipeline_writes_client_deliverables(tmp_path: Path) -> None:
     assert result.predictions_path.exists()
     assert result.risk_segments_path.exists()
     assert result.lift_table_path.exists()
+    assert result.calibration_table_path.exists()
+    assert result.metric_intervals_path.exists()
     assert result.feature_importance_path.exists()
     assert result.shap_importance_path.exists()
     assert result.recommendations_path.exists()
@@ -43,10 +45,15 @@ def test_run_churn_pipeline_writes_client_deliverables(tmp_path: Path) -> None:
     assert result.dashboard_path.exists()
     assert result.model_path.exists()
     assert "roc_auc" in result.metrics
+    assert "brier_score" in result.metrics
     assert result.lift_table_path.name == "holdout_lift_table.csv"
 
     lift_table = pd.read_csv(result.lift_table_path)
     assert lift_table["customers"].sum() < len(pd.read_csv("data/telco_customers.csv"))
+    calibration = pd.read_csv(result.calibration_table_path)
+    assert calibration["absolute_gap"].between(0, 1).all()
+    intervals = pd.read_csv(result.metric_intervals_path)
+    assert set(intervals["metric"]) == {"roc_auc", "pr_auc"}
 
 
 def test_run_churn_pipeline_supports_logistic_explainability(tmp_path: Path) -> None:

@@ -19,6 +19,8 @@ def write_pdf_report(
     quality_report: DataQualityReport,
     risk_segments: pd.DataFrame,
     lift_table: pd.DataFrame,
+    calibration_table: pd.DataFrame,
+    metric_intervals: pd.DataFrame,
     recommendations: pd.DataFrame,
     risk_chart_path: Path,
     feature_chart_path: Path,
@@ -89,6 +91,16 @@ def write_pdf_report(
             styles["BodyText"],
         ),
         _dataframe_table(lift_table.head(5)),
+        Spacer(1, 0.18 * inch),
+        Paragraph("Probability Evidence", styles["Heading2"]),
+        Paragraph(
+            "Calibration and confidence intervals are computed from holdout customers only, "
+            "so model evidence stays separate from the full customer action queue.",
+            styles["BodyText"],
+        ),
+        _dataframe_table(metric_intervals),
+        Spacer(1, 0.08 * inch),
+        _dataframe_table(calibration_table.head(6), font_size=7),
         Spacer(1, 0.18 * inch),
         Paragraph("Top Recommended Actions", styles["Heading2"]),
         _dataframe_table(

@@ -3,6 +3,8 @@
     "predictions": "sample_outputs\\flagship_demo\\predictions.csv",
     "risk_segments": "sample_outputs\\flagship_demo\\risk_segments.csv",
     "holdout_lift_table": "sample_outputs\\flagship_demo\\holdout_lift_table.csv",
+    "calibration_table": "sample_outputs\\flagship_demo\\calibration_table.csv",
+    "metric_confidence_intervals": "sample_outputs\\flagship_demo\\metric_confidence_intervals.csv",
     "feature_importance": "sample_outputs\\flagship_demo\\feature_importance.csv",
     "shap_feature_importance": "sample_outputs\\flagship_demo\\shap_feature_importance.csv",
     "retention_recommendations": "sample_outputs\\flagship_demo\\retention_recommendations.csv",
@@ -23,6 +25,8 @@
     "predictions",
     "risk_segments",
     "holdout_lift_table",
+    "calibration_table",
+    "metric_confidence_intervals",
     "feature_importance",
     "shap_feature_importance",
     "retention_recommendations"
