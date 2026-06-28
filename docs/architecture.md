@@ -26,7 +26,7 @@ flowchart LR
 - Keep modeling, recommendations, reports, and contracts in separate modules.
 - Treat every exported CSV as a product surface.
 - Produce business-readable artifacts, not only technical metrics.
-- Make every demo reproducible from source data, config, and seed.
+- Make every public sample reproducible from source data, config, and a documented Kaggle dataset.
 
 ## Module Map
 

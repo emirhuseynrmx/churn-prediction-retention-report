@@ -16,11 +16,11 @@ Customer churn risk scoring and retention prioritization for business review.
 
 ## Metrics
 
-- `roc_auc`: `0.77`
-- `pr_auc`: `0.5164`
-- `baseline_pr_auc`: `0.2267`
-- `accuracy`: `0.7667`
-- `precision`: `0.4615`
-- `recall`: `0.1765`
-- `f1`: `0.2553`
-- `confusion_matrix`: `[[109, 7], [28, 6]]`
+- `roc_auc`: `0.8435`
+- `pr_auc`: `0.6564`
+- `baseline_pr_auc`: `0.2655`
+- `accuracy`: `0.7908`
+- `precision`: `0.6319`
+- `recall`: `0.508`
+- `f1`: `0.5632`
+- `confusion_matrix`: `[[1386, 166], [276, 285]]`

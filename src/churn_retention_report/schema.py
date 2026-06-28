@@ -14,7 +14,7 @@ def validate_input_frame(frame: pd.DataFrame, config: ChurnConfig) -> pd.DataFra
     schema = pa.DataFrameSchema(required, coerce=True, strict=False)
     validated = schema.validate(frame, lazy=True)
     if len(validated) < 20:
-        raise ValueError("Churn modeling needs at least 20 rows for a meaningful demo split.")
+        raise ValueError("Churn modeling needs at least 20 rows for a meaningful train/test split.")
     if validated[config.target_column].nunique() < 2:
         raise ValueError("Target column must contain both churned and retained examples.")
     class_counts = validated[config.target_column].value_counts().to_dict()

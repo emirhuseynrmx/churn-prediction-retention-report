@@ -1,12 +1,31 @@
 from __future__ import annotations
 
-from churn_retention_report.sample_data import generate_saas_churn_data
+import pandas as pd
+
+from churn_retention_report.kaggle_data import normalize_telco_churn
 
 
-def test_generate_saas_churn_data_is_reproducible() -> None:
-    first = generate_saas_churn_data(rows=50, seed=7)
-    second = generate_saas_churn_data(rows=50, seed=7)
+def test_normalize_telco_churn_maps_real_kaggle_columns() -> None:
+    raw = pd.DataFrame(
+        {
+            "customerID": ["C1", "C2"],
+            "Contract": ["Month-to-month", "Two year"],
+            "InternetService": ["Fiber optic", "DSL"],
+            "PaymentMethod": ["Electronic check", "Credit card"],
+            "MonthlyCharges": [89.9, 44.2],
+            "TotalCharges": ["89.9", "530.4"],
+            "TechSupport": ["No", "Yes"],
+            "OnlineSecurity": ["No", "Yes"],
+            "DeviceProtection": ["Yes", "No"],
+            "tenure": [1, 12],
+            "PaperlessBilling": ["Yes", "No"],
+            "SeniorCitizen": [1, 0],
+            "Churn": ["Yes", "No"],
+        }
+    )
 
-    assert first.equals(second)
-    assert set(first["churned"].unique()) <= {0, 1}
-    assert "failed_payments" in first.columns
+    normalized = normalize_telco_churn(raw)
+
+    assert normalized["customer_id"].tolist() == ["C1", "C2"]
+    assert normalized["churned"].tolist() == [1, 0]
+    assert normalized["support_tickets"].tolist() == [2, 1]

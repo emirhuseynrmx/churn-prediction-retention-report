@@ -60,7 +60,7 @@
 #align(center)[
   #text(size: 21pt, weight: "bold", fill: navy, "Sample Churn Risk & Retention Report")
   #v(3pt)
-  #text(size: 9pt, fill: muted, "Client-ready churn analysis package generated from the demo pipeline")
+  #text(size: 9pt, fill: muted, "Client-ready churn analysis package generated from Kaggle Telco churn data")
   #v(7pt)
   #pill("XGBoost", blue)
   #h(5pt)

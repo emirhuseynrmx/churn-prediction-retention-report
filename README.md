@@ -75,15 +75,13 @@ The repo also includes the boring parts that usually make client work safer:
 
 ```bash
 pip install -e ".[dev]"
-churn-report data/sample_customers.csv --config examples/config.json --out outputs/demo
+churn-prepare-kaggle --out data/telco_customers.csv
+churn-report data/telco_customers.csv --config examples/config.json --out outputs/telco_report
 ```
 
-Generate a larger synthetic SaaS dataset:
-
-```bash
-churn-generate-sample --rows 500 --out data/synthetic_saas_customers.csv
-churn-report data/synthetic_saas_customers.csv --config examples/config.json --out outputs/saas_demo
-```
+The public sample uses the Kaggle Telco Customer Churn dataset. Private client data should use
+the same contract: a customer id, a churn label, and behavior or billing columns known before
+the churn event.
 
 Docker:
 
@@ -132,4 +130,5 @@ Client data should not be committed to a public repository. Sensitive columns ca
 - [Architecture](docs/architecture.md)
 - [Case Study](docs/case_study.md)
 - [Client Intake Form](docs/client_intake_form.md)
+- [Leakage Policy](docs/leakage_policy.md)
 - [Scope And Privacy](docs/scope_and_privacy.md)

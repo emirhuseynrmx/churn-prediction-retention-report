@@ -1,35 +1,35 @@
 # Churn Prediction Metrics Report
 
-- Rows analyzed: `500`
-- Observed churn rate: `23.00%`
-- High-risk customers: `33`
-- Medium-risk customers: `66`
-- Top decile churn capture: `39.13%`
-- Top 20% churn capture: `64.35%`
+- Rows analyzed: `7043`
+- Observed churn rate: `26.54%`
+- High-risk customers: `553`
+- Medium-risk customers: `1477`
+- Top decile churn capture: `30.07%`
+- Top 20% churn capture: `51.52%`
 
 ## Model Metrics
 
-- `roc_auc`: `0.77`
-- `pr_auc`: `0.5164`
-- `baseline_pr_auc`: `0.2267`
-- `accuracy`: `0.7667`
-- `precision`: `0.4615`
-- `recall`: `0.1765`
-- `f1`: `0.2553`
-- `confusion_matrix`: `[[109, 7], [28, 6]]`
+- `roc_auc`: `0.8435`
+- `pr_auc`: `0.6564`
+- `baseline_pr_auc`: `0.2655`
+- `accuracy`: `0.7908`
+- `precision`: `0.6319`
+- `recall`: `0.508`
+- `f1`: `0.5632`
+- `confusion_matrix`: `[[1386, 166], [276, 285]]`
 
 ## Top Risk Drivers
 
-- `numeric__usage`: `0.1629` (model_importance)
-- `numeric__support_tickets`: `0.1340` (model_importance)
-- `numeric__payments`: `0.1307` (model_importance)
-- `categorical__plan_Pro`: `0.1115` (model_importance)
-- `numeric__nps_score`: `0.1077` (model_importance)
-- `numeric__failed_payments`: `0.0919` (model_importance)
-- `numeric__months_active`: `0.0885` (model_importance)
-- `numeric__discount_percent`: `0.0722` (model_importance)
-- `categorical__plan_Basic`: `0.0658` (model_importance)
-- `categorical__plan_Enterprise`: `0.0347` (model_importance)
+- `categorical__plan_Month-to-month`: `0.5494` (model_importance)
+- `categorical__internet_service_Fiber optic`: `0.1439` (model_importance)
+- `numeric__support_tickets`: `0.0696` (model_importance)
+- `categorical__payment_method_Electronic check`: `0.0495` (model_importance)
+- `numeric__months_active`: `0.0338` (model_importance)
+- `categorical__plan_Two year`: `0.0315` (model_importance)
+- `numeric__paperless_billing`: `0.0220` (model_importance)
+- `categorical__plan_One year`: `0.0169` (model_importance)
+- `categorical__internet_service_No`: `0.0164` (model_importance)
+- `numeric__usage`: `0.0145` (model_importance)
 
 ## Recommended Business Read
 

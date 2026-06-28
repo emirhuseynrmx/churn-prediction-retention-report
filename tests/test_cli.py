@@ -9,7 +9,7 @@ def test_cli_run_command(tmp_path) -> None:
     result = CliRunner().invoke(
         app,
         [
-            "data/sample_customers.csv",
+            "data/telco_customers.csv",
             "--config",
             "examples/config.json",
             "--out",

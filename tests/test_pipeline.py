@@ -9,20 +9,20 @@ from churn_retention_report.pipeline import run_churn_pipeline
 from churn_retention_report.schema import validate_input_frame
 
 
-def test_validate_input_frame_accepts_sample_data() -> None:
+def test_validate_input_frame_accepts_telco_data() -> None:
     config = ChurnConfig.load(Path("examples/config.json"))
-    frame = pd.read_csv("data/sample_customers.csv")
+    frame = pd.read_csv("data/telco_customers.csv")
 
     validated = validate_input_frame(frame, config)
 
-    assert len(validated) == 30
+    assert len(validated) > 1000
     assert validated[config.target_column].nunique() == 2
 
 
 def test_run_churn_pipeline_writes_client_deliverables(tmp_path: Path) -> None:
     config = ChurnConfig.load(Path("examples/config.json"))
 
-    result = run_churn_pipeline(Path("data/sample_customers.csv"), tmp_path, config)
+    result = run_churn_pipeline(Path("data/telco_customers.csv"), tmp_path, config)
 
     assert result.predictions_path.exists()
     assert result.risk_segments_path.exists()
@@ -50,7 +50,7 @@ def test_run_churn_pipeline_supports_logistic_explainability(tmp_path: Path) -> 
         update={"model_name": "balanced_logistic_regression"}
     )
 
-    result = run_churn_pipeline(Path("data/sample_customers.csv"), tmp_path, config)
+    result = run_churn_pipeline(Path("data/telco_customers.csv"), tmp_path, config)
 
     assert result.shap_importance_path.exists()
     assert result.shap_chart_path.exists()

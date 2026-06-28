@@ -1,6 +1,7 @@
 # Case Study: SaaS Churn Risk Report
 
-This case study uses a reproducible synthetic SaaS dataset. It is realistic enough to show the full delivery flow without exposing private customer data.
+This case study uses the public Kaggle Telco Customer Churn dataset. The data is normalized into
+the same customer-level contract used by the pipeline, then scored with a holdout-tested model.
 
 ## Client Scenario
 
@@ -16,8 +17,8 @@ failed_payments, nps_score, discount_percent, churned
 ## Proof Of Work Command
 
 ```bash
-churn-generate-sample --rows 500 --seed 42 --out data/synthetic_saas_customers.csv
-churn-report data/synthetic_saas_customers.csv --config examples/config.json --out outputs/flagship_demo
+churn-prepare-kaggle --out data/telco_customers.csv
+churn-report data/telco_customers.csv --config examples/config.json --out outputs/flagship_demo
 ```
 
 ## Delivered Files
