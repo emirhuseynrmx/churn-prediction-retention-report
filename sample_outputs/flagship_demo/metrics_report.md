@@ -4,8 +4,8 @@
 - Observed churn rate: `26.54%`
 - High-risk customers: `553`
 - Medium-risk customers: `1477`
-- Top decile churn capture: `30.07%`
-- Top 20% churn capture: `51.52%`
+- Top decile churn capture: `28.88%`
+- Top 20% churn capture: `48.13%`
 
 ## Model Metrics
 
@@ -35,6 +35,6 @@
 
 Use `retention_recommendations.csv` as the action queue. High-risk customers should be reviewed first, then medium-risk customers.
 
-Use `lift_table.csv` to prove whether the model concentrates churners near the top of the risk-ranked customer list.
+Use `holdout_lift_table.csv` to prove whether the model concentrates churners near the top of the risk-ranked customer list.
 
 PR-AUC is included because churn datasets are often imbalanced and precision/recall quality matters more than accuracy alone.

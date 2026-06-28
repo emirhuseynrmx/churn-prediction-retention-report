@@ -147,10 +147,9 @@ def write_pdf_report(
         Spacer(1, 0.18 * inch),
         Paragraph("Scope and Privacy", styles["Heading2"]),
         Paragraph(
-            "This package is for a one-time churn analysis and retention report from a "
-            "provided CSV. API deployment, recurring automation, CRM integration, and "
-            "dashboard hosting are custom add-ons. Client data should not be committed "
-            "to a public repository.",
+            "This repository keeps raw private datasets out of version control. The "
+            "checked-in sample artifacts are reproducible from the included public-data "
+            "workflow and are meant to show the report shape without exposing private data.",
             styles["BodyText"],
         ),
     ]
@@ -175,7 +174,13 @@ def _dataframe_table(frame: pd.DataFrame, font_size: int = 8) -> Table:
 
 
 def _styled_table(rows: list[list[object]], font_size: int = 8) -> Table:
-    table = Table(rows, repeatRows=1)
+    col_widths = None
+    column_count = len(rows[0]) if rows else 0
+    if column_count == 2:
+        col_widths = [2.3 * inch, 3.2 * inch]
+    elif column_count > 2:
+        col_widths = [6.5 * inch / column_count] * column_count
+    table = Table(rows, repeatRows=1, colWidths=col_widths, hAlign="LEFT")
     table.setStyle(
         TableStyle(
             [

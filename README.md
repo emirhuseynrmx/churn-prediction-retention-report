@@ -3,11 +3,14 @@
 [![CI](https://github.com/emirhuseynrmx/churn-prediction-retention-report/actions/workflows/ci.yml/badge.svg)](https://github.com/emirhuseynrmx/churn-prediction-retention-report/actions)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 
-This is a small production-style churn reporting pipeline.
+This is a production-style churn reporting pipeline.
 
-The goal is simple: take a customer CSV, validate it, train a churn model, score every customer, and export files a business can actually use. It is not trying to be a full SaaS product, live dashboard, or MLOps platform.
+The goal is simple: take a customer CSV, validate it, train a churn model, score
+every customer, and export artifacts that make the model behavior inspectable.
+It is not trying to be a full SaaS product, live dashboard, or MLOps platform.
 
-It is closer to the kind of one-time client delivery I would build for a churn analysis project: clean inputs, reproducible config, clear outputs, a PDF report, and an action queue for retention work.
+The project is a portfolio-grade report pipeline: clean inputs, reproducible
+config, validated outputs, a PDF report, and an action queue for retention work.
 
 ## What It Produces
 
@@ -53,9 +56,9 @@ recommended_action
 retention_priority
 ```
 
-That is the part a founder, customer success team, or operator can open and act on.
+That is the part that turns model output into an operations-ready review queue.
 
-The repo also includes the boring parts that usually make client work safer:
+The repo also includes the boring parts that make this kind of work safer:
 
 - Pydantic config for column mapping and thresholds
 - Pandera validation for inputs and exported CSVs
@@ -79,9 +82,9 @@ churn-prepare-kaggle --out data/telco_customers.csv
 churn-report data/telco_customers.csv --config examples/config.json --out outputs/telco_report
 ```
 
-The public sample uses the Kaggle Telco Customer Churn dataset. Private client data should use
-the same contract: a customer id, a churn label, and behavior or billing columns known before
-the churn event.
+The public sample uses the Kaggle Telco Customer Churn dataset. Any replacement
+dataset should follow the same contract: a customer id, a churn label, and
+behavior or billing columns known before the churn event.
 
 Docker:
 
@@ -108,7 +111,7 @@ Sample outputs are committed under `sample_outputs/flagship_demo/` so the report
 
 ## Output Contract
 
-Every client-facing CSV is validated before export:
+Every exported CSV is validated before export:
 
 - `predictions.csv`: customer id, churn probability, risk segment
 - `risk_segments.csv`: segment size and average risk
@@ -123,7 +126,8 @@ This package is for a one-time churn analysis and retention report from a provid
 
 It does not include API deployment, CRM integration, scheduled retraining, database extraction, hosted dashboards, or guaranteed model accuracy. Those are separate scopes.
 
-Client data should not be committed to a public repository. Sensitive columns can be removed or anonymized before modeling.
+Private data should not be committed to a public repository. Sensitive columns
+should be removed or anonymized before modeling.
 
 ## Docs
 

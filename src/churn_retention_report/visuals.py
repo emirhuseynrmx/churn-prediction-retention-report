@@ -111,7 +111,11 @@ def write_dashboard_image(
     high_risk = int((predictions["risk_segment"] == "high").sum())
     medium_risk = int((predictions["risk_segment"] == "medium").sum())
     top_driver = str(feature_importance.iloc[0]["feature"]).replace("numeric__", "")
-    top_action = str(recommendations.iloc[0]["recommended_action"])
+    top_recommendation = recommendations.sort_values(
+        ["retention_priority", "churn_probability"],
+        ascending=[True, False],
+    ).iloc[0]
+    top_action = _compact_action(str(top_recommendation["recommended_action"]))
     avg_high_risk = float(risk_segments.loc[
         risk_segments["risk_segment"] == "high",
         "avg_churn_probability",
@@ -148,9 +152,16 @@ def write_dashboard_image(
     axes[1, 1].text(0.02, 0.80, "Top Driver", fontsize=13, color="#57606a")
     axes[1, 1].text(0.02, 0.62, top_driver, fontsize=17, fontweight="bold")
     axes[1, 1].text(0.02, 0.42, "Recommended Action", fontsize=13, color="#57606a")
-    axes[1, 1].text(0.02, 0.14, fill(top_action, width=52), fontsize=10, wrap=True)
+    axes[1, 1].text(0.02, 0.14, fill(top_action, width=46), fontsize=10.5, wrap=True)
 
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(path, dpi=170)
     plt.close(fig)
     return path
+
+
+def _compact_action(action: str) -> str:
+    if "Suggested playbook:" in action:
+        prefix, playbook = action.split("Suggested playbook:", maxsplit=1)
+        return f"{prefix.strip()} Playbook: {playbook.strip()}"
+    return action
