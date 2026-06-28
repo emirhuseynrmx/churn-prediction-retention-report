@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from textwrap import fill
 
 import matplotlib
 import pandas as pd
@@ -31,7 +32,8 @@ def write_feature_importance_chart(feature_importance: pd.DataFrame, path: Path)
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.barh(top["feature"], top["importance"], color="#0969da")
     ax.set_title("Top Churn Risk Drivers")
-    ax.set_xlabel("Absolute model coefficient")
+    has_coefficients = set(top["direction"]).issubset({"increases_risk", "decreases_risk"})
+    ax.set_xlabel("Absolute logistic coefficient" if has_coefficients else "Feature importance")
     ax.grid(axis="x", alpha=0.25)
     fig.tight_layout()
     fig.savefig(path, dpi=160)
@@ -110,10 +112,12 @@ def write_dashboard_image(
     medium_risk = int((predictions["risk_segment"] == "medium").sum())
     top_driver = str(feature_importance.iloc[0]["feature"]).replace("numeric__", "")
     top_action = str(recommendations.iloc[0]["recommended_action"])
-    avg_high_risk = risk_segments.loc[
+    avg_high_risk = float(risk_segments.loc[
         risk_segments["risk_segment"] == "high",
         "avg_churn_probability",
-    ].max()
+    ].max())
+    if pd.isna(avg_high_risk):
+        avg_high_risk = 0.0
 
     path.parent.mkdir(parents=True, exist_ok=True)
     fig, axes = plt.subplots(2, 2, figsize=(11, 7))
@@ -129,7 +133,12 @@ def write_dashboard_image(
     axes[0, 1].text(0.02, 0.36, f"{medium_risk}", fontsize=38, fontweight="bold")
     axes[0, 1].text(0.02, 0.15, "Review before renewal", fontsize=12)
 
-    counts = predictions["risk_segment"].value_counts().reindex(["high", "medium", "low"])
+    counts = (
+        predictions["risk_segment"]
+        .value_counts()
+        .reindex(["high", "medium", "low"])
+        .fillna(0)
+    )
     axes[1, 0].bar(counts.index, counts.values, color=["#d73a49", "#f2cc60", "#2ea043"])
     axes[1, 0].set_title("Risk Queue")
     axes[1, 0].set_ylabel("Customers")
@@ -139,7 +148,7 @@ def write_dashboard_image(
     axes[1, 1].text(0.02, 0.80, "Top Driver", fontsize=13, color="#57606a")
     axes[1, 1].text(0.02, 0.62, top_driver, fontsize=17, fontweight="bold")
     axes[1, 1].text(0.02, 0.42, "Recommended Action", fontsize=13, color="#57606a")
-    axes[1, 1].text(0.02, 0.18, top_action[:110], fontsize=10, wrap=True)
+    axes[1, 1].text(0.02, 0.14, fill(top_action, width=52), fontsize=10, wrap=True)
 
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(path, dpi=170)

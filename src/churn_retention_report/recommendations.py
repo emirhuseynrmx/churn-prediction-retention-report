@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 import pandas as pd
 
 from churn_retention_report.config import ChurnConfig
@@ -84,19 +86,19 @@ def build_recommendations(
     rows: list[dict[str, object]] = []
     merged = predictions.merge(source_frame, on=config.id_column, how="left")
     benchmarks = _build_driver_benchmarks(merged)
-    for _, row in merged.iterrows():
+    for row in merged.to_dict("records"):
         drivers = _customer_drivers(row, benchmarks, top_rule_keys)
         recommendation = _recommendation_for_segment(
-            segment=str(row["risk_segment"]),
+            segment=str(row.get("risk_segment")),
             drivers=drivers,
             rules=config.recommendation_rules,
         )
-        priority = _priority_for_segment(str(row["risk_segment"]))
+        priority = _priority_for_segment(str(row.get("risk_segment")))
         rows.append(
             {
-                config.id_column: row[config.id_column],
-                "risk_segment": row["risk_segment"],
-                "churn_probability": row["churn_probability"],
+                config.id_column: row.get(config.id_column),
+                "risk_segment": row.get("risk_segment"),
+                "churn_probability": row.get("churn_probability"),
                 "likely_drivers": ", ".join(drivers[:3]) if drivers else "general_engagement",
                 "recommended_action": recommendation,
                 "retention_priority": priority,
@@ -125,7 +127,7 @@ def _build_driver_benchmarks(frame: pd.DataFrame) -> dict[str, float]:
 
 
 def _customer_drivers(
-    row: pd.Series,
+    row: Mapping[str, object],
     benchmarks: dict[str, float],
     top_rule_keys: list[str],
 ) -> list[str]:
@@ -172,9 +174,10 @@ def _recommendation_for_segment(
             "Send targeted intervention before renewal risk increases. "
             f"Suggested playbook: {primary_playbook}"
         )
-    if drivers:
-        return f"Monitor monthly and reinforce the strongest positive behavior: {drivers[0]}."
-    return "Maintain standard lifecycle communication."
+    return (
+        "No immediate intervention required. Keep in standard lifecycle nurture "
+        "and monitor monthly."
+    )
 
 
 def _priority_for_segment(segment: str) -> int:

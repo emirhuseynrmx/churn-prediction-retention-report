@@ -32,8 +32,11 @@ class DataQualityReport(BaseModel):
             "## Missing Values",
             "",
         ]
-        for column, count in self.missing_values.items():
-            lines.append(f"- `{column}`: `{count}`")
+        if self.missing_values:
+            for column, count in self.missing_values.items():
+                lines.append(f"- `{column}`: `{count}`")
+        else:
+            lines.append("- No missing values detected.")
         lines.extend(["", "## Feature Types", ""])
         lines.append(f"- Numeric: `{', '.join(self.numeric_columns)}`")
         lines.append(f"- Categorical: `{', '.join(self.categorical_columns)}`")
@@ -56,7 +59,11 @@ def profile_data_quality(frame: pd.DataFrame, config: ChurnConfig) -> DataQualit
         columns=len(frame.columns),
         churn_rate=float(frame[config.target_column].mean()),
         duplicate_customer_ids=int(frame[config.id_column].duplicated().sum()),
-        missing_values={str(column): int(count) for column, count in frame.isna().sum().items()},
+        missing_values={
+            str(column): int(count)
+            for column, count in frame.isna().sum().items()
+            if int(count) > 0
+        },
         numeric_columns=[str(column) for column in numeric],
         categorical_columns=[str(column) for column in categorical],
         leakage_warnings=_detect_leakage_columns(frame, config),
@@ -67,9 +74,13 @@ def _detect_leakage_columns(frame: pd.DataFrame, config: ChurnConfig) -> list[st
     suspicious_terms = [
         "cancel",
         "cancellation",
+        "churn_date",
         "refund_after",
         "refund_post",
         "closed_at",
+        "end_date",
+        "ended_at",
+        "contract_end",
         "churn_reason",
         "termination",
     ]

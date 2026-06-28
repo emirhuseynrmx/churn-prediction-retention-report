@@ -25,7 +25,7 @@ churn-report data/telco_customers.csv --config examples/config.json --out output
 
 - `predictions.csv`: one churn probability per customer.
 - `risk_segments.csv`: high, medium, and low risk segment summary.
-- `lift_table.csv`: proof that the model concentrates churners in the highest-risk deciles.
+- `holdout_lift_table.csv`: proof that the model concentrates churners in the highest-risk deciles on unseen rows.
 - `feature_importance.csv`: model-level risk drivers.
 - `shap_feature_importance.csv`: SHAP/XAI attribution table for explainability.
 - `retention_recommendations.csv`: account-level action queue.
@@ -52,7 +52,7 @@ This is the level of work that can justify a premium offer because the client re
 
 The model ranks customers by churn risk. The top-risk segment should be reviewed first because it concentrates the highest expected churn probability.
 
-Use `lift_table.csv` to answer the practical retention question: if the team focuses on the highest-risk customers first, how much observed churn does that list capture?
+Use `holdout_lift_table.csv` to answer the practical retention question: if the team focuses on the highest-risk customers first, how much observed churn does that list capture on the held-out test split?
 
 Use `retention_recommendations.csv` as the operating queue. It turns churn probabilities into customer-level actions with likely drivers and retention priority.
 

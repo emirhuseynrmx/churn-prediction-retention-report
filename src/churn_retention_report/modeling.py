@@ -27,6 +27,8 @@ class ModelArtifacts:
     metrics: dict[str, float | list[list[int]]]
     feature_names: list[str]
     feature_importance: pd.DataFrame
+    holdout_index: pd.Index
+    holdout_probabilities: pd.Series
 
 
 def train_model(frame: pd.DataFrame, config: ChurnConfig) -> ModelArtifacts:
@@ -68,6 +70,8 @@ def train_model(frame: pd.DataFrame, config: ChurnConfig) -> ModelArtifacts:
         metrics=metrics,
         feature_names=feature_names,
         feature_importance=importance,
+        holdout_index=x_test.index,
+        holdout_probabilities=pd.Series(probabilities, index=x_test.index),
     )
 
 
@@ -78,15 +82,16 @@ def _build_classifier(config: ChurnConfig) -> LogisticRegression | XGBClassifier
             max_iter=1000,
             random_state=config.random_state,
         )
+    xgb = config.xgboost
     return XGBClassifier(
-        colsample_bytree=0.9,
+        colsample_bytree=xgb.colsample_bytree,
         eval_metric="logloss",
-        learning_rate=0.05,
-        max_depth=3,
-        n_estimators=160,
+        learning_rate=xgb.learning_rate,
+        max_depth=xgb.max_depth,
+        n_estimators=xgb.n_estimators,
         random_state=config.random_state,
-        reg_lambda=1.5,
-        subsample=0.9,
+        reg_lambda=xgb.reg_lambda,
+        subsample=xgb.subsample,
     )
 
 

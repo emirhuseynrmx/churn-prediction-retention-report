@@ -71,8 +71,14 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
     feature_frame = frame.drop(columns=[config.id_column, config.target_column])
     probabilities = artifacts.model.predict_proba(feature_frame)[:, 1]
     predictions = build_predictions(frame, probabilities, config)
+    holdout_frame = frame.loc[artifacts.holdout_index]
+    holdout_predictions = build_predictions(
+        holdout_frame,
+        artifacts.holdout_probabilities,
+        config,
+    )
     risk_segments = build_risk_segments(predictions)
-    lift_table = build_lift_table(predictions, frame, config)
+    lift_table = build_lift_table(holdout_predictions, holdout_frame, config)
     recommendations = build_recommendations(
         predictions,
         frame,
@@ -95,7 +101,7 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
     output_dir.mkdir(parents=True, exist_ok=True)
     predictions_path = write_csv(predictions, output_dir / "predictions.csv")
     risk_segments_path = write_csv(risk_segments, output_dir / "risk_segments.csv")
-    lift_table_path = write_csv(lift_table, output_dir / "lift_table.csv")
+    lift_table_path = write_csv(lift_table, output_dir / "holdout_lift_table.csv")
     feature_importance_path = write_csv(
         feature_importance,
         output_dir / "feature_importance.csv",
@@ -169,7 +175,7 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
             files={
                 "predictions": str(predictions_path),
                 "risk_segments": str(risk_segments_path),
-                "lift_table": str(lift_table_path),
+                "holdout_lift_table": str(lift_table_path),
                 "feature_importance": str(feature_importance_path),
                 "shap_feature_importance": str(shap_importance_path),
                 "retention_recommendations": str(recommendations_path),
@@ -189,7 +195,7 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
             validated_outputs=[
                 "predictions",
                 "risk_segments",
-                "lift_table",
+                "holdout_lift_table",
                 "feature_importance",
                 "shap_feature_importance",
                 "retention_recommendations",

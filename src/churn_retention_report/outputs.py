@@ -9,7 +9,7 @@ from sklearn.pipeline import Pipeline
 
 def write_csv(frame: pd.DataFrame, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    frame.to_csv(path, index=False)
+    frame.to_csv(path, index=False, float_format="%.4f")
     return path
 
 
@@ -63,8 +63,8 @@ def write_metrics_report(
             "Use `retention_recommendations.csv` as the action queue. "
             "High-risk customers should be reviewed first, then medium-risk customers.",
             "",
-            "Use `lift_table.csv` to prove whether the model concentrates churners "
-            "near the top of the risk-ranked customer list.",
+            "Use `holdout_lift_table.csv` to prove whether the model concentrates "
+            "churners near the top of the risk-ranked customer list.",
             "",
             "PR-AUC is included because churn datasets are often imbalanced and "
             "precision/recall quality matters more than accuracy alone.",

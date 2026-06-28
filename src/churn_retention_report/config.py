@@ -19,12 +19,25 @@ class RiskThresholds(BaseModel):
         return self
 
 
+class XGBoostConfig(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    colsample_bytree: float = Field(default=0.9, gt=0, le=1)
+    learning_rate: float = Field(default=0.05, gt=0, le=1)
+    max_depth: int = Field(default=3, ge=1, le=12)
+    n_estimators: int = Field(default=160, ge=20, le=2000)
+    reg_lambda: float = Field(default=1.5, ge=0)
+    subsample: float = Field(default=0.9, gt=0, le=1)
+
+
 class ChurnConfig(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     target_column: str = "churned"
     id_column: str = "customer_id"
-    positive_label: int = 1
+    positive_label: str | int | bool = 1
+    minimum_rows: int = Field(default=100, ge=20)
+    minimum_class_count: int = Field(default=5, ge=2)
     test_size: float = Field(default=0.3, gt=0, lt=1)
     random_state: int = 42
     model_name: Literal["xgboost_classifier", "balanced_logistic_regression"] = (
@@ -35,6 +48,7 @@ class ChurnConfig(BaseModel):
     lift_table_deciles: int = Field(default=10, ge=5, le=20)
     shap_sample_size: int = Field(default=300, ge=25, le=5000)
     risk_thresholds: RiskThresholds = Field(default_factory=RiskThresholds)
+    xgboost: XGBoostConfig = Field(default_factory=XGBoostConfig)
     recommendation_rules: dict[str, str] = Field(default_factory=dict)
 
     @classmethod

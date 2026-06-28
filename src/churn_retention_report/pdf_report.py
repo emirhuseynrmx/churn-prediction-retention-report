@@ -44,6 +44,11 @@ def write_pdf_report(
     )
     high_risk_row = risk_segments.loc[risk_segments["risk_segment"] == "high"]
     high_risk_count = int(high_risk_row["customers"].iloc[0]) if not high_risk_row.empty else 0
+    id_column = recommendations.columns[0]
+    top_recommendations = recommendations.sort_values(
+        ["retention_priority", "churn_probability"],
+        ascending=[True, False],
+    ).head(5)
     story = [
         Paragraph("Churn Prediction + Retention Report", styles["Title"]),
         Paragraph(
@@ -87,16 +92,22 @@ def write_pdf_report(
         Spacer(1, 0.18 * inch),
         Paragraph("Top Recommended Actions", styles["Heading2"]),
         _dataframe_table(
-            recommendations[
+            top_recommendations[
                 [
-                    "customer_id",
+                    id_column,
                     "risk_segment",
                     "churn_probability",
                     "likely_drivers",
-                    "recommended_action",
+                    "retention_priority",
                 ]
-            ].head(5),
+            ],
             font_size=7,
+        ),
+        Spacer(1, 0.08 * inch),
+        Paragraph(
+            "Detailed recommended_action text is delivered in "
+            "retention_recommendations.csv so the PDF stays readable.",
+            styles["BodyText"],
         ),
         Spacer(1, 0.18 * inch),
         Paragraph("Recommended Retention Strategy", styles["Heading2"]),
