@@ -96,6 +96,8 @@ docker run --rm -v "%cd%/outputs:/app/outputs" churn-retention-report
 
 Sample outputs are committed under `sample_outputs/flagship_demo/` so the report shape is visible without running the code first.
 
+![Sample churn retention PDF report](docs/assets/sample-churn-report-preview.png)
+
 ![Risk segment distribution](docs/assets/risk_segments.png)
 
 ![Feature importance chart](docs/assets/feature_importance.png)
