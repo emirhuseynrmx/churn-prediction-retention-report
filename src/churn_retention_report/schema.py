@@ -58,6 +58,6 @@ def _normalize_label(value: object) -> str:
     # Convert integer-like floats (e.g. 1.0 → "1") before stringifying so that
     # integer target columns upcast to float64 due to NaN in other columns still
     # match the {"0", "1"} fast-path and user-supplied positive_label integers.
-    if isinstance(value, float) and not (value != value) and value == int(value):
+    if isinstance(value, float) and value == value and value == int(value):
         return str(int(value))
     return str(value).strip().lower()
