@@ -1,0 +1,4 @@
+risk_segment,customers,avg_churn_probability
+high,539,0.7801
+medium,1475,0.5454
+low,5029,0.1281

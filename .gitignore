@@ -11,3 +11,14 @@ build/
 *.egg-info/
 outputs/*
 !outputs/.gitkeep
+!outputs/client_report.pdf
+!outputs/client_report.typ
+!outputs/predictions.csv
+!outputs/retention_recommendations.csv
+!outputs/metrics_report.md
+!outputs/manifest.json
+!outputs/model_card.md
+!outputs/risk_segments.csv
+!outputs/feature_importance.csv
+!outputs/executive_dashboard.png
+!outputs/risk_segments.png

@@ -1,0 +1,35 @@
+{
+  "files": {
+    "predictions": "outputs\\predictions.csv",
+    "risk_segments": "outputs\\risk_segments.csv",
+    "holdout_lift_table": "outputs\\holdout_lift_table.csv",
+    "calibration_table": "outputs\\calibration_table.csv",
+    "metric_confidence_intervals": "outputs\\metric_confidence_intervals.csv",
+    "feature_importance": "outputs\\feature_importance.csv",
+    "shap_feature_importance": "outputs\\shap_feature_importance.csv",
+    "retention_recommendations": "outputs\\retention_recommendations.csv",
+    "metrics_report": "outputs\\metrics_report.md",
+    "data_quality_report": "outputs\\data_quality_report.md",
+    "model_card": "outputs\\model_card.md",
+    "pdf_report": "outputs\\client_report.pdf",
+    "typst_report": "outputs\\client_report.typ",
+    "risk_chart": "outputs\\risk_segments.png",
+    "feature_chart": "outputs\\feature_importance.png",
+    "shap_summary": "outputs\\shap_summary.png",
+    "probability_distribution": "outputs\\probability_distribution.png",
+    "executive_dashboard": "outputs\\executive_dashboard.png",
+    "model": "outputs\\model.joblib",
+    "config_snapshot": "outputs\\config_snapshot.json"
+  },
+  "model_name": "xgboost_classifier",
+  "validated_outputs": [
+    "predictions",
+    "risk_segments",
+    "holdout_lift_table",
+    "calibration_table",
+    "metric_confidence_intervals",
+    "feature_importance",
+    "shap_feature_importance",
+    "retention_recommendations"
+  ]
+}
