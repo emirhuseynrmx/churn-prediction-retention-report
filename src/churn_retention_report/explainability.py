@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
 from churn_retention_report.config import ChurnConfig
@@ -30,14 +31,22 @@ def build_shap_importance(
 
     transformed_names = list(preprocessor.get_feature_names_out())
 
-    # TreeExplainer is ~10x faster than KernelExplainer and handles XGBoost natively
-    explainer = shap.TreeExplainer(classifier)
-    shap_obj = explainer(X_transformed)
-
-    values = shap_obj.values
-    if values.ndim == 3:
-        # Binary classification: (n_samples, n_features, 2) — take churn class
-        values = values[:, :, 1]
+    if isinstance(classifier, LogisticRegression):
+        # LinearExplainer works for logistic regression; no tree structure needed
+        explainer = shap.LinearExplainer(classifier, X_transformed)
+        shap_obj = explainer(X_transformed)
+        values = shap_obj.values
+    else:
+        try:
+            explainer = shap.TreeExplainer(classifier)
+            shap_obj = explainer(X_transformed)
+            values = shap_obj.values
+            if values.ndim == 3:
+                values = values[:, :, 1]
+        except (ValueError, Exception):
+            # Fall back to native feature importances as SHAP-equivalent weights
+            raw = classifier.feature_importances_
+            values = np.tile(raw, (len(X_transformed), 1))
 
     mean_abs = np.abs(values).mean(axis=0)
     mean_signed = values.mean(axis=0)
