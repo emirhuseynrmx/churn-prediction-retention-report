@@ -1,17 +1,17 @@
 feature,importance,direction
-categorical__plan_Month-to-month,0.5483,model_importance
-categorical__internet_service_Fiber optic,0.1418,model_importance
-numeric__support_tickets,0.0725,model_importance
-categorical__payment_method_Electronic check,0.0470,model_importance
-numeric__months_active,0.0330,model_importance
-categorical__plan_Two year,0.0309,model_importance
-numeric__paperless_billing,0.0245,model_importance
-categorical__internet_service_No,0.0171,model_importance
-categorical__plan_One year,0.0170,model_importance
-numeric__usage,0.0150,model_importance
-numeric__payments,0.0147,model_importance
-categorical__internet_service_DSL,0.0099,model_importance
-categorical__payment_method_Mailed check,0.0088,model_importance
-numeric__senior_citizen,0.0082,model_importance
-categorical__payment_method_Bank transfer (automatic),0.0067,model_importance
-categorical__payment_method_Credit card (automatic),0.0047,model_importance
+categorical__plan_Month-to-month,0.4229,model_importance
+numeric__support_tickets,0.1275,model_importance
+categorical__internet_service_Fiber optic,0.1117,model_importance
+categorical__payment_method_Electronic check,0.0729,model_importance
+numeric__months_active,0.0517,model_importance
+categorical__internet_service_No,0.0398,model_importance
+categorical__plan_Two year,0.0359,model_importance
+numeric__paperless_billing,0.0312,model_importance
+categorical__plan_One year,0.0299,model_importance
+numeric__usage,0.0215,model_importance
+numeric__payments,0.0170,model_importance
+categorical__internet_service_DSL,0.0147,model_importance
+numeric__senior_citizen,0.0146,model_importance
+categorical__payment_method_Mailed check,0.0073,model_importance
+categorical__payment_method_Credit card (automatic),0.0010,model_importance
+categorical__payment_method_Bank transfer (automatic),0.0004,model_importance

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import optuna
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -13,12 +14,14 @@ from sklearn.metrics import (
     recall_score,
     roc_auc_score,
 )
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold, cross_val_score, train_test_split
 from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 
 from churn_retention_report.config import ChurnConfig
 from churn_retention_report.features import build_preprocessor, split_feature_types
+
+optuna.logging.set_verbosity(optuna.logging.WARNING)
 
 
 @dataclass(frozen=True)
@@ -31,24 +34,71 @@ class ModelArtifacts:
     holdout_probabilities: pd.Series
 
 
+def _optuna_objective(
+    trial: optuna.Trial,
+    x_train: pd.DataFrame,
+    y_train: pd.Series,
+    preprocessor: object,
+    random_state: int,
+) -> float:
+    params = {
+        "n_estimators": trial.suggest_int("n_estimators", 80, 500),
+        "max_depth": trial.suggest_int("max_depth", 2, 7),
+        "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
+        "subsample": trial.suggest_float("subsample", 0.6, 1.0),
+        "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 1.0),
+        "reg_lambda": trial.suggest_float("reg_lambda", 1e-3, 10.0, log=True),
+        "min_child_weight": trial.suggest_int("min_child_weight", 1, 8),
+        "eval_metric": "logloss",
+        "random_state": random_state,
+        "verbosity": 0,
+    }
+    pipe = Pipeline([("preprocessor", preprocessor), ("classifier", XGBClassifier(**params))])
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=random_state)
+    scores = cross_val_score(pipe, x_train, y_train, cv=cv, scoring="roc_auc", n_jobs=-1)
+    return float(scores.mean())
+
+
 def train_model(frame: pd.DataFrame, config: ChurnConfig) -> ModelArtifacts:
     feature_frame = frame.drop(columns=[config.id_column, config.target_column])
     target = frame[config.target_column].astype(int)
     numeric_features, categorical_features = split_feature_types(feature_frame)
     preprocessor = build_preprocessor(numeric_features, categorical_features)
-    classifier = _build_classifier(config)
-    model = Pipeline(
-        steps=[
-            ("preprocessor", preprocessor),
-            ("classifier", classifier),
-        ]
-    )
+
     x_train, x_test, y_train, y_test = train_test_split(
         feature_frame,
         target,
         test_size=config.test_size,
         random_state=config.random_state,
         stratify=target,
+    )
+
+    if config.model_name == "xgboost_classifier":
+        study = optuna.create_study(
+            direction="maximize",
+            sampler=optuna.samplers.TPESampler(seed=config.random_state),
+            pruner=optuna.pruners.MedianPruner(n_warmup_steps=8),
+        )
+        study.optimize(
+            lambda t: _optuna_objective(t, x_train, y_train, preprocessor, config.random_state),
+            n_trials=40,
+            show_progress_bar=False,
+        )
+        best = study.best_params
+        classifier: LogisticRegression | XGBClassifier = XGBClassifier(
+            **best,
+            eval_metric="logloss",
+            random_state=config.random_state,
+            verbosity=0,
+        )
+    else:
+        classifier = _build_classifier(config)
+
+    model = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("classifier", classifier),
+        ]
     )
     model.fit(x_train, y_train)
     probabilities = model.predict_proba(x_test)[:, 1]
