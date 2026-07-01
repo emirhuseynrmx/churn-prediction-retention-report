@@ -20,5 +20,6 @@ outputs/*
 !outputs/model_card.md
 !outputs/risk_segments.csv
 !outputs/feature_importance.csv
+!outputs/shap_feature_importance.csv
 !outputs/executive_dashboard.png
 !outputs/risk_segments.png

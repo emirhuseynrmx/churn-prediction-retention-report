@@ -1,0 +1,17 @@
+feature,mean_abs_shap,mean_signed_shap,direction
+categorical__plan_Month-to-month,0.6645,-0.0595,pushes_churn_down
+numeric__months_active,0.4179,-0.1557,pushes_churn_down
+numeric__support_tickets,0.3641,-0.1418,pushes_churn_down
+numeric__usage,0.3460,-0.0893,pushes_churn_down
+categorical__internet_service_Fiber optic,0.1991,-0.0141,pushes_churn_down
+categorical__payment_method_Electronic check,0.1642,-0.0585,pushes_churn_down
+numeric__paperless_billing,0.1492,-0.0247,pushes_churn_down
+categorical__plan_Two year,0.1391,-0.0630,pushes_churn_down
+numeric__payments,0.1294,-0.0476,pushes_churn_down
+categorical__plan_One year,0.0625,-0.0252,pushes_churn_down
+numeric__senior_citizen,0.0536,-0.0165,pushes_churn_down
+categorical__internet_service_No,0.0183,-0.0072,pushes_churn_down
+categorical__payment_method_Mailed check,0.0091,-0.0025,pushes_churn_down
+categorical__payment_method_Bank transfer (automatic),0.0064,0.0015,pushes_churn_up
+categorical__internet_service_DSL,0.0037,-0.0006,pushes_churn_down
+categorical__payment_method_Credit card (automatic),0.0018,-0.0003,pushes_churn_down
