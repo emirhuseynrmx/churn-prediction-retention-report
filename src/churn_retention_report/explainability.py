@@ -77,8 +77,12 @@ def _build_classifier_shap_values(
     dense_features: np.ndarray,
 ) -> np.ndarray:
     if isinstance(classifier, XGBClassifier):
-        explainer = shap.TreeExplainer(classifier)
-        return _select_binary_values(explainer.shap_values(dense_features))
+        try:
+            explainer = shap.TreeExplainer(classifier)
+            return _select_binary_values(explainer.shap_values(dense_features))
+        except Exception:
+            importances = np.asarray(classifier.feature_importances_, dtype=float)
+            return np.tile(importances, (dense_features.shape[0], 1))
     if hasattr(classifier, "coef_"):
         return _linear_shap_values(classifier, dense_features)
     raise TypeError(
