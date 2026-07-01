@@ -22,15 +22,19 @@ def build_shap_importance(
     )
     names = list(sampled.columns)
     try:
-        values = _build_pipeline_explanation_values(model, sampled, config)
+        values = _build_pipeline_shap_values(model, sampled, config)
     except Exception:
         transformed = model.named_steps["preprocessor"].transform(sampled)
         dense_features = _to_dense_array(transformed)
         classifier = model.named_steps["classifier"]
-        values = _build_classifier_explanation_values(classifier, dense_features)
+        values = _build_classifier_shap_values(classifier, dense_features)
         names = feature_names
+
     mean_abs = np.abs(values).mean(axis=0)
     mean_signed = values.mean(axis=0)
+    if len(names) != len(mean_abs):
+        names = [f"feature_{index}" for index in range(len(mean_abs))]
+
     return pd.DataFrame(
         {
             "feature": names,
@@ -44,7 +48,7 @@ def build_shap_importance(
     ).sort_values("mean_abs_shap", ascending=False)
 
 
-def _build_pipeline_explanation_values(
+def _build_pipeline_shap_values(
     model: Pipeline,
     sampled: pd.DataFrame,
     config: ChurnConfig,
@@ -68,7 +72,7 @@ def _build_pipeline_explanation_values(
     return np.asarray(explanation.values)
 
 
-def _build_classifier_explanation_values(
+def _build_classifier_shap_values(
     classifier: object,
     dense_features: np.ndarray,
 ) -> np.ndarray:
@@ -99,9 +103,9 @@ def _to_dense_array(features: object) -> np.ndarray:
 
 
 def _select_binary_values(shap_values: object) -> np.ndarray:
+    if isinstance(shap_values, list):
+        return np.asarray(shap_values[1])
     values = np.asarray(shap_values)
     if values.ndim == 3:
         return values[:, :, 1]
-    if isinstance(shap_values, list):
-        return np.asarray(shap_values[1])
     return values

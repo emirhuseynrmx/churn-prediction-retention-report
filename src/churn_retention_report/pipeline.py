@@ -210,6 +210,7 @@ def run_churn_pipeline(input_path: Path, output_dir: Path, config: ChurnConfig) 
                 "data_quality_report": str(data_quality_report_path),
                 "model_card": str(model_card_path),
                 "pdf_report": str(pdf_report_path),
+                "typst_report": str(pdf_report_path.with_suffix(".typ")),
                 "risk_chart": str(risk_chart_path),
                 "feature_chart": str(feature_chart_path),
                 "shap_summary": str(shap_chart_path),

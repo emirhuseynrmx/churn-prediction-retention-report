@@ -10,7 +10,7 @@ every customer, and export artifacts that make the model behavior inspectable.
 It is not trying to be a full SaaS product, live dashboard, or MLOps platform.
 
 The project is a portfolio-grade report pipeline: clean inputs, reproducible
-config, validated outputs, a PDF report, and an action queue for retention work.
+config, validated outputs, a Typst-built PDF report, and an action queue for retention work.
 
 ## What It Produces
 
@@ -33,7 +33,7 @@ the pipeline writes:
 - `metrics_report.md`
 - `data_quality_report.md`
 - `model_card.md`
-- `client_report.pdf`
+- `client_report.pdf` and `client_report.typ`
 - `manifest.json`
 - `config_snapshot.json`
 - `risk_segments.png`
@@ -69,7 +69,7 @@ The repo also includes the boring parts that make this kind of work safer:
 - leakage warnings for suspicious post-churn columns
 - XGBoost as the default model
 - logistic regression fallback
-- SHAP explanations for XGBoost and logistic configs
+- SHAP explanations with a logistic-regression fallback
 - ROC AUC, PR-AUC, baseline PR-AUC, precision, recall, F1, confusion matrix
 - holdout lift table with top 10% and top 20% churn capture
 - holdout calibration table and bootstrap confidence intervals
